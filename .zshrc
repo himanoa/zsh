@@ -1,21 +1,17 @@
 path=(
+  $HOME/bin
   $HOME/.cargo/bin
   $HOME/src/github.com/himanoa/git-subcommands/src
+  $HOME/src/github.com/himanoa/git-subbcommands/src
   $GOPATH/bin
   ~/.anyenv/bin(N-/)
+  $XDG_CONFIG_HOME/tmux/
   $path
 )
 export FZF_TMUX=1
 export EDITOR='nvim'
 autoload -U compinit
 compinit -u
-
-
-
-powerline-daemon -q
-POWERLINE_BASH_CONTINUATION=1
-POWERLINE_BASH_SELECT=1
-. /usr/lib/python3.7/site-packages/powerline/bindings/zsh/powerline.zsh
 
 ### Added by Zplugin's installer
 source "$HOME/.config/zsh/.zplugin/bin/zplugin.zsh"
@@ -27,36 +23,15 @@ zplugin light zsh-users/zsh-autosuggestions
 zplugin light zdharma/fast-syntax-highlighting
 zplugin ice from"gh-r" as"program"
 zplugin load junegunn/fzf-bin
+zplugin light "chitoku-k/fzf-zsh-completions"
 
 unsetopt prompt_subst;
-
-almel_preexec() {
-    ALMEL_START="$EPOCHREALTIME"
-}
-
-almel_precmd() {
-    STATUS="$?"
-    NUM_JOBS="$#jobstates"
-    END="$EPOCHREALTIME"
-    DURATION="$(($END - ${ALMEL_START:-$END}))"
-    PROMPT="$(almel prompt zsh -s"$STATUS" -j"$NUM_JOBS" -d"$DURATION")"
-    unset ALMEL_START
-}
-
-almel_setup() {
-    autoload -Uz add-zsh-hook
-
-    add-zsh-hook precmd almel_precmd
-    add-zsh-hook preexec almel_preexec
-}
-
-almel_setup
 
 bindkey -d
 bindkey -e
 alias vim='nvim'
+alias buraro='git status -s | awk "{print $2}" | xargs rm -rf'
 
-eval "$(anyenv init -)"
 . $HOME/.fzf.zsh
 
 function ghq_cd() {
@@ -73,4 +48,41 @@ zle -N ghq_cd ghq_cd
 zle -N edit-command-line
 bindkey "^X^E" ghq_cd
 fpath=(/usr/local/share/zsh-completions ${fpath})
+eval "$(anyenv init -)"
+autoload -U promptinit; promptinit
+prompt pure
 eval "$(direnv hook zsh)"
+
+
+function precmd() {
+  if [ ! -z $TMUX ]; then
+    tmux refresh-client -S
+  fi
+}
+
+## fzf-zsh-completions/rails.zsh
+
+_fzf_complete_rails() {
+  if [[ "$@" =~ '^rails (generate|g)' ]]; then
+      _fzf_complete_rails-generators '' "$@"
+      return
+  fi
+
+  _fzf_path_completion "$prefix" "$@"
+}
+
+_fzf_complete_rails-generators() {
+  shift
+  _fzf_complete "" "rails g "  < <(
+    rails g --help | sed -ne '/^Please/,$p' | sed '/^ *$/d' | sed -ne '/^ /p' | sed 's/^[ ]*//g'
+  ) 
+}
+
+_fzf_complete_rails-generators_post() {
+    awk '{ print $0 }'
+}
+
+
+_fzf_complete_make() {
+    _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1  }')
+}
