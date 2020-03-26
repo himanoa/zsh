@@ -4,9 +4,9 @@ path=(
   $HOME/src/github.com/himanoa/git-subcommands/src
   $HOME/src/github.com/himanoa/git-subbcommands/src
   $GOPATH/bin
-  ~/.anyenv/bin(N-/)
   $XDG_CONFIG_HOME/tmux/
   $path
+  $HOME/.anyenv/bin
 )
 export FZF_TMUX=1
 export EDITOR='nvim'
@@ -39,7 +39,6 @@ function ghq_cd() {
 }
 function gst() {
     if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
-        git status
         git status -sb
     fi
 }
@@ -48,11 +47,8 @@ zle -N ghq_cd ghq_cd
 zle -N edit-command-line
 bindkey "^X^E" ghq_cd
 fpath=(/usr/local/share/zsh-completions ${fpath})
-eval "$(anyenv init -)"
 autoload -U promptinit; promptinit
 prompt pure
-eval "$(direnv hook zsh)"
-
 
 function precmd() {
   if [ ! -z $TMUX ]; then
@@ -84,5 +80,8 @@ _fzf_complete_rails-generators_post() {
 
 
 _fzf_complete_make() {
-    _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1  }')
+  _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1 }')
 }
+
+eval "$(anyenv init -)"
+eval "$(direnv hook zsh)"
