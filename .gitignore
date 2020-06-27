@@ -2,3 +2,4 @@
 .zcompdump
 .zcompdump.*
 .zplugin
+.zinit

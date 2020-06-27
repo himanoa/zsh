@@ -7,23 +7,13 @@ path=(
   $XDG_CONFIG_HOME/tmux/
   $path
   $HOME/.anyenv/bin
+  $HOME/src/github.com/himanoa/git-subcommands/src
 )
+fpath+=$HOME/.zsh/pure
 export FZF_TMUX=1
 export EDITOR='nvim'
 autoload -U compinit
 compinit -u
-
-### Added by Zplugin's installer
-source "$HOME/.config/zsh/.zplugin/bin/zplugin.zsh"
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin installer's chunk
-
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zdharma/fast-syntax-highlighting
-zplugin ice from"gh-r" as"program"
-zplugin load junegunn/fzf-bin
-zplugin light "chitoku-k/fzf-zsh-completions"
 
 unsetopt prompt_subst;
 
@@ -31,8 +21,6 @@ bindkey -d
 bindkey -e
 alias vim='nvim'
 alias buraro='git status -s | awk "{print $2}" | xargs rm -rf'
-
-. $HOME/.fzf.zsh
 
 function ghq_cd() {
   cd $(ghq root)/$(ghq list | fzf-tmux)
@@ -85,3 +73,14 @@ _fzf_complete_make() {
 
 eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
+
+
+source ~/bin/antigen.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zdharma/fast-syntax-highlighting
+antigen bundle from"gh-r" as"program"
+antigen bundle chitoku-k/fzf-zsh-completions
+antigen apply
+
+alias twname="echo 'p \"ひまのあ\".insert((0...\"ひまのあ\".size).to_a.sample, \"ネコ🏵\")' | ruby"
