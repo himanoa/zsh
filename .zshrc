@@ -11,7 +11,15 @@ path=(
 )
 fpath+=$HOME/.zsh/pure
 export FZF_TMUX=1
+export GOPATH=$HOME
 export EDITOR='nvim'
+export HISTSIZE=1000
+
+export SAVEHIST=100000
+
+setopt hist_ignore_dups
+
+setopt EXTENDED_HISTORY
 autoload -U compinit
 compinit -u
 
