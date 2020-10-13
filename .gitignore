@@ -3,3 +3,4 @@
 .zcompdump.*
 .zplugin
 .zinit
+.zshrc.zwc

@@ -83,7 +83,7 @@ eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
 
 
-source ~/bin/antigen.zsh
+source ~/.config/zsh/antigen/bin/antigen.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zdharma/fast-syntax-highlighting
