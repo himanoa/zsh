@@ -16,6 +16,7 @@ export EDITOR='nvim'
 export HISTSIZE=1000
 export FZF_DEFAULT_OPTS="--tiebreak=index --ansi --border"
 export FZF_DEFAULT_COMMAND="fd --color always"
+export FZF_TMUX=1
 
 export SAVEHIST=100000
 
