@@ -84,6 +84,7 @@ _fzf_complete_make() {
 
 eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
+eval $(opam env)
 
 
 source ~/.config/zsh/antigen/bin/antigen.zsh
