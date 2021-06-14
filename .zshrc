@@ -1,3 +1,4 @@
+export CARGO_HOME="$HOME/.cargo"
 path=(
   $HOME/bin
   $HOME/.cargo/bin
@@ -6,8 +7,9 @@ path=(
   $GOPATH/bin
   $XDG_CONFIG_HOME/tmux/
   $path
-  $HOME/.anyenv/bin
   $HOME/src/github.com/himanoa/git-subcommands/src
+  $CARGO_HOME/bin
+  /opt/asdf-vm
 )
 fpath+=$HOME/.zsh/pure
 export FZF_TMUX=1
@@ -17,6 +19,7 @@ export HISTSIZE=1000
 export FZF_DEFAULT_OPTS="--tiebreak=index --ansi --border"
 export FZF_DEFAULT_COMMAND="fd --color always"
 export FZF_TMUX=1
+export ASDF_CONFIG_FILE=~/.asdfrc
 
 export SAVEHIST=100000
 
@@ -25,8 +28,6 @@ setopt hist_ignore_dups
 setopt EXTENDED_HISTORY
 autoload -U compinit
 compinit -u
-
-unsetopt prompt_subst;
 
 bindkey -d
 bindkey -e
@@ -46,9 +47,16 @@ zle -N ghq_cd ghq_cd
 zle -N edit-command-line
 bindkey "^X^E" ghq_cd
 fpath=(/usr/local/share/zsh-completions ${fpath})
-autoload -U promptinit; promptinit
-prompt pure
 
+export HISTFILE=${HOME}/.zsh_history
+
+export HISTSIZE=1000
+
+export SAVEHIST=100000
+
+setopt hist_ignore_dups
+
+setopt EXTENDED_HISTORY
 function precmd() {
   if [ ! -z $TMUX ]; then
     tmux refresh-client -S
@@ -82,11 +90,13 @@ _fzf_complete_make() {
   _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1 }')
 }
 
-eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
-eval $(opam env)
+. $HOME/.asdf/asdf.sh
+fpath=(${ASDF_DIR}/completions $fpath)
+# initialise completions with ZSH's compinit
 
-
+autoload -Uz compinit
+compinit
 source ~/.config/zsh/antigen/bin/antigen.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 antigen bundle zsh-users/zsh-autosuggestions
@@ -95,4 +105,25 @@ antigen bundle from"gh-r" as"program"
 antigen bundle chitoku-k/fzf-zsh-completions
 antigen apply
 
-alias twname="echo 'p \"ひまのあ\".insert((0...\"ひまのあ\".size).to_a.sample, \"ネコ🏵\")' | ruby"
+
+almel_preexec() {
+    ALMEL_START="$EPOCHREALTIME"
+}
+
+almel_precmd() {
+    STATUS="$?"
+    NUM_JOBS="$#jobstates"
+    END="$EPOCHREALTIME"
+    DURATION=0
+    PROMPT="$(almel prompt zsh -s"$STATUS" -j"$NUM_JOBS" -d"$DURATION")"
+    unset ALMEL_START
+}
+
+almel_setup() {
+    autoload -Uz add-zsh-hook
+
+    add-zsh-hook preexec almel_preexec
+    add-zsh-hook precmd almel_precmd
+}
+
+almel_setup
