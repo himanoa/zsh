@@ -90,8 +90,34 @@ _fzf_complete_make() {
   _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1 }')
 }
 
+
+## fzf-zsh-completions/asdf.zsh
+_fzf_complete_asdf() {
+  if [[ "$@" =~ '^asdf install (.*) ' ]]; then
+    _fzf_complete_asdf-install '' "$match[1]" "$@"
+    return
+  fi
+
+  _fzf_path_completion "$prefix"  "$@"
+}
+
+_fzf_complete_asdf-install() {
+  shift
+  _fzf_complete "--ansi --tiebreak=index $fzf_options" "asdf install "$1" " < <(asdf list-all "$1" | sort)
+}
+
+_fzf_complete_asdf-install_post() {
+    awk '{ print $0 }'
+}
+
+
+_fzf_complete_make() {
+  _fzf_complete "--ansi --tiebreak=index $fzf_options" $@ < <(grep -E '^[a-zA-Z_-]+:.*?$$' Makefile | sort | awk -F ':' '{ print $1 }')
+}
+
 eval "$(direnv hook zsh)"
 . $HOME/.asdf/asdf.sh
+. ~/.asdf/plugins/java/set-java-home.zsh
 fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
 
@@ -99,12 +125,12 @@ autoload -Uz compinit
 compinit
 source ~/.config/zsh/antigen/bin/antigen.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle from"gh-r" as"program"
 antigen bundle chitoku-k/fzf-zsh-completions
 antigen apply
-
 
 almel_preexec() {
     ALMEL_START="$EPOCHREALTIME"
