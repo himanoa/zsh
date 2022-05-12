@@ -116,8 +116,8 @@ _fzf_complete_make() {
 }
 
 eval "$(direnv hook zsh)"
-. $HOME/.asdf/asdf.sh
-. ~/.asdf/plugins/java/set-java-home.zsh
+. /opt/asdf-vm/asdf.sh
+#. ~/.asdf/plugins/java/set-java-home.zsh
 fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
 
@@ -127,9 +127,10 @@ source ~/.config/zsh/antigen/bin/antigen.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle from"gh-r" as"program"
 antigen bundle chitoku-k/fzf-zsh-completions
+antigen bundle zsh-users/zsh-syntax-highlighting
+
 antigen apply
 
 almel_preexec() {
@@ -152,4 +153,11 @@ almel_setup() {
     add-zsh-hook precmd almel_precmd
 }
 
+. ~/.asdf/plugins/java/set-java-home.zsh
+
 almel_setup
+precmd() { 
+  tmux rename-window "${PWD:t}"
+} 
+
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
