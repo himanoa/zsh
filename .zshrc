@@ -123,7 +123,7 @@ fpath=(${ASDF_DIR}/completions $fpath)
 
 autoload -Uz compinit
 compinit
-source ~/.config/zsh/antigen/bin/antigen.zsh
+source ~/src/github.com/himanoa/zsh/antigen/bin/antigen.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 antigen bundle zsh-users/zsh-autosuggestions
