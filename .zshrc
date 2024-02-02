@@ -10,6 +10,8 @@ path=(
   $HOME/src/github.com/himanoa/git-subcommands/src
   $CARGO_HOME/bin
   /opt/asdf-vm
+  $HOME/.local/share/coursier/bin
+  $HOME/.local/share/gem/ruby/3.0.0/bin
 )
 fpath+=$HOME/.zsh/pure
 export FZF_TMUX=1
