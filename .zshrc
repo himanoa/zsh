@@ -8,22 +8,23 @@ path=(
   $XDG_CONFIG_HOME/tmux/
   $path
   $HOME/src/github.com/himanoa/git-subcommands/src
+  $HOME/.local/bin
   $CARGO_HOME/bin
   /opt/asdf-vm
   $HOME/.local/share/coursier/bin
   $HOME/.local/share/gem/ruby/3.0.0/bin
 )
 fpath+=$HOME/.zsh/pure
-export FZF_TMUX=1
+export FZF_TMUX=0
 export GOPATH=$HOME
 export EDITOR='nvim'
 export HISTSIZE=1000
 export FZF_DEFAULT_OPTS="--tiebreak=index --ansi --border"
 export FZF_DEFAULT_COMMAND="fd --color always"
-export FZF_TMUX=1
 export ASDF_CONFIG_FILE=~/.asdfrc
-
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 export SAVEHIST=100000
+export XDG_DATA_HOME=$HOME/.local/share
 
 setopt hist_ignore_dups
 
@@ -37,7 +38,7 @@ alias vim='nvim'
 alias buraro='git status -s | awk "{print $2}" | xargs rm -rf'
 
 function ghq_cd() {
-  cd $(ghq root)/$(ghq list | fzf-tmux)
+  cd $(ghq root)/$(ghq list | fzf)
 }
 function gst() {
     if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
@@ -125,13 +126,15 @@ fpath=(${ASDF_DIR}/completions $fpath)
 
 autoload -Uz compinit
 compinit
-source ~/src/github.com/himanoa/zsh/antigen/bin/antigen.zsh
+source ~/.config/zsh/antigen/bin/antigen.zsh
+[ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle from"gh-r" as"program"
 antigen bundle chitoku-k/fzf-zsh-completions
 antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle azu/ni.zsh@main
 
 antigen apply
 
